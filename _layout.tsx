@@ -1,91 +1,131 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
+  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 
 export default function App() {
-  const [posts, setPosts] = useState([]);
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Sample data loaded once
-  useEffect(() => {
-    setPosts([
-      { id: 1, name: 'ilyas hussain', role: 'Software Engineer at Google',
-        text: 'Just shipped my first React Native app! 🚀', likes: 12, liked: false },
-      { id: 2, name: 'M. Abbas', role: 'Product Manager at Microsoft',
-        text: 'Looking for a UI/UX designer for our startup. DM me if interested.', likes: 34, liked: true },
-      { id: 3, name: 'Ajmul', role: 'Data Analyst at Amazon',
-        text: 'Completed my 100 days of coding challenge. Consistency is key!', likes: 56, liked: false },
-    ]);
-  }, []);
+  const categories = ['All', 'Pizza', 'Burger', 'Dry Fruits', 'Balti Zaan', 'Mangos'];
+  
+  const foods = [
+    { id: 1, name: 'Pizza', price: '$12.99', rating: '4.8', time: '25 min', img: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400' },
+    { id: 2, name: 'Burger', price: '$8.99', rating: '4.6', time: '15 min', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400' },
+    { id: 3, name: 'Dry Fruits', price: '$10.99', rating: '4.9', time: '20 min', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfWD-thKHwQqnp5PIWI5qXmkW2hFw4-MllbA&s' },
+    { id: 4, name: 'Balti Zaan', price: '$10.99', rating: '4.9', time: '10 min', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4MnnHRP0cAfydt8m3ZKZoSR9T_VWpZX0DTg&s' },
+    { id: 5, name: 'Mangos', price: '$3.99', rating: '4.4', time: '8 min', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgZ91EMc1ts6-TN9_cS_-hjldD4uzi1OvOPw&s' },
+  ];
 
-  const toggleLike = (id) => {
-    setPosts(posts.map(post =>
-      post.id === id
-       ? {...post, liked:!post.liked, likes: post.liked? post.likes - 1 : post.likes + 1 }
-        : post
-    ));
-  };
+  const filteredFoods = selectedCategory === 'All' 
+    ? foods 
+    : foods.filter(f => f.name.includes(selectedCategory));
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-
+      
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Linkit</Text>
+        <View>
+          <Text style={styles.greeting}>Hi Sarwar👋</Text>
+           <Text style={styles.location}>name: Sarwar</Text>
+            <Text style={styles.location}>reg no :562</Text>
+          <Text style={styles.location}>Skardu</Text>
+        </View>
+        <TouchableOpacity style={styles.profile}>
+          <Text style={styles.profileText}>GB</Text>
+        </TouchableOpacity>
       </View>
 
-      <ScrollView>
-        {/* Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>GB</Text>
-          </View>
-          <Text style={styles.profileName}>M.Sarwar</Text>
-          <Text style={styles.profileRole}>web Developer</Text>
-          <Text style={styles.profileStats}>450 connections</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Search Bar */}
+        <View style={styles.searchBox}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for food..."
+            value={search}
+            onChangeText={setSearch}
+            placeholderTextColor="#999"
+          />
         </View>
 
-        {/* Feed Title */}
-        <Text style={styles.sectionTitle}>Feed</Text>
-
-        {/* Posts */}
-        {posts.map(post => (
-          <View key={post.id} style={styles.postCard}>
-            <View style={styles.postHeader}>
-              <View style={styles.smallAvatar}>
-                <Text style={styles.smallAvatarText}>{post.name[0]}</Text>
-              </View>
-              <View>
-                <Text style={styles.postName}>{post.name}</Text>
-                <Text style={styles.postRole}>{post.role}</Text>
-              </View>
-            </View>
-
-            <Text style={styles.postText}>{post.text}</Text>
-
-            <View style={styles.postFooter}>
-              <Text style={styles.likesText}>{post.likes} likes</Text>
-              <TouchableOpacity
-                style={[styles.likeBtn, post.liked && styles.likeBtnActive]}
-                onPress={() => toggleLike(post.id)}
-              >
-                <Text style={[styles.likeText, post.liked && styles.likeTextActive]}>
-                  {post.liked? '❤️ Liked' : '👍 Like'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+        {/* Banner */}
+        <View style={styles.banner}>
+          <View style={styles.bannerText}>
+            <Text style={styles.bannerTitle}>30% OFF</Text>
+            <Text style={styles.bannerSubtitle}>select your order</Text>
           </View>
-        ))}
+        </View>
 
-        <View style={{ height: 30 }} />
+        {/* Categories */}
+        <Text style={styles.sectionTitle}>Categories</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categories}>
+          {categories.map(cat => (
+            <TouchableOpacity
+              key={cat}
+              style={[
+                styles.categoryBtn,
+                selectedCategory === cat && styles.categoryBtnActive
+              ]}
+              onPress={() => setSelectedCategory(cat)}
+            >
+              <Text style={[
+                styles.categoryText,
+                selectedCategory === cat && styles.categoryTextActive
+              ]}>
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Popular Foods */}
+        <Text style={styles.sectionTitle}>Popular Dishesh</Text>
+        <View style={styles.foodGrid}>
+          {filteredFoods.map(food => (
+            <TouchableOpacity key={food.id} style={styles.foodCard}>
+              <Image source={{ uri: food.img }} style={styles.foodImage} />
+              <View style={styles.foodInfo}>
+                <Text style={styles.foodName}>{food.name}</Text>
+                <View style={styles.foodMeta}>
+                  <Text style={styles.foodPrice}>{food.price}</Text>
+                  <Text style={styles.foodRating}>⭐ {food.rating}</Text>
+                </View>
+                <Text style={styles.foodTime}>{food.time}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
+
+      {/* Bottom Nav */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navTextActive}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navIcon}>🔍</Text>
+          <Text style={styles.navText}>Search</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navIcon}>🛒</Text>
+          <Text style={styles.navText}>Cart</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navText}>Profile</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -93,134 +133,176 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F2EF',
+    backgroundColor: '#F8F9FA',
   },
   header: {
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#0A66C2',
-  },
-  profileCard: {
-    backgroundColor: '#fff',
-    padding: 20,
-    alignItems: 'center',
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#0A66C2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: '700',
-  },
-  profileName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000',
-  },
-  profileRole: {
-    fontSize: 15,
-    color: '#666',
-    marginTop: 4,
-  },
-  profileStats: {
-    fontSize: 14,
-    color: '#0A66C2',
-    marginTop: 6,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    marginHorizontal: 20,
-    marginVertical: 15,
-  },
-  postCard: {
-    backgroundColor: '#fff',
-    padding: 15,
-    marginHorizontal: 15,
-    marginBottom: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  postHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  smallAvatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    backgroundColor: '#0A66C2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  smallAvatarText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  postName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
-  },
-  postRole: {
-    fontSize: 13,
-    color: '#666',
-  },
-  postText: {
-    fontSize: 15,
-    color: '#000',
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  postFooter: {
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
   },
-  likesText: {
+  greeting: {
     fontSize: 14,
     color: '#666',
   },
-  likeBtn: {
-    paddingHorizontal: 15,
-    paddingVertical: 6,
+  location: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginTop: 4,
+  },
+  profile: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    backgroundColor: '#FF6B35',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  searchBox: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 15,
+    fontSize: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  banner: {
+    marginHorizontal: 20,
+    backgroundColor: '#FF6B35',
     borderRadius: 20,
-    backgroundColor: '#F3F2EF',
+    padding: 25,
+    marginBottom: 25,
   },
-  likeBtnActive: {
-    backgroundColor: '#E8F3FF',
+  bannerText: {},
+  bannerTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#fff',
   },
-  likeText: {
+  bannerSubtitle: {
+    fontSize: 16,
+    color: '#fff',
+    opacity: 0.9,
+    marginTop: 5,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginHorizontal: 20,
+    marginBottom: 15,
+  },
+  categories: {
+    paddingLeft: 20,
+    marginBottom: 25,
+  },
+  categoryBtn: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
+    backgroundColor: '#fff',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  categoryBtnActive: {
+    backgroundColor: '#FF6B35',
+    borderColor: '#FF6B35',
+  },
+  categoryText: {
     fontSize: 15,
     color: '#666',
     fontWeight: '600',
   },
-  likeTextActive: {
-    color: '#0A66C2',
+  categoryTextActive: {
+    color: '#fff',
+  },
+  foodGrid: {
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+  },
+  foodCard: {
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    marginBottom: 15,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+  },
+  foodImage: {
+    width: '100%',
+    height: 160,
+  },
+  foodInfo: {
+    padding: 15,
+  },
+  foodName: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 8,
+  },
+  foodMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  foodPrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FF6B35',
+  },
+  foodRating: {
+    fontSize: 14,
+    color: '#666',
+  },
+  foodTime: {
+    fontSize: 13,
+    color: '#999',
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  navItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  navIcon: {
+    fontSize: 22,
+    marginBottom: 4,
+  },
+  navText: {
+    fontSize: 12,
+    color: '#999',
+  },
+  navTextActive: {
+    fontSize: 12,
+    color: '#FF6B35',
+    fontWeight: '600',
   },
 });
